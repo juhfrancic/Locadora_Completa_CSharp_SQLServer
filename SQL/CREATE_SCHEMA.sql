@@ -35,6 +35,8 @@ CREATE TABLE tblCategorias (
     Descricao VARCHAR(255),
     Diaria DECIMAL(10, 2) NOT NULL
 );
+ALTER TABLE tblCategorias
+DROP COLUMN Diaria;
 
 -- 4. Tabela tblVeiculos (Relacionamento 1:N com tblCategorias e 1:N com tblLocacoes)
 CREATE TABLE tblVeiculos (
@@ -47,6 +49,10 @@ CREATE TABLE tblVeiculos (
     StatusVeiculo VARCHAR(20) NOT NULL DEFAULT 'Disponível', -- 'Disponível', 'Alugado', 'Manutenção'
     CONSTRAINT FK_Veiculos_Categorias FOREIGN KEY (CategoriaID) REFERENCES tblCategorias(CategoriaID)
 );
+
+UPDATE tblVeiculos
+SET StatusVeiculo = 'Disponivel'
+WHERE StatusVeiculo = 'Disponível';
 
 -- 5. Tabela tblFuncionarios (Parte do N:M com tblLocacoes via tblLocacaoFuncionarios)
 CREATE TABLE tblFuncionarios (
@@ -72,6 +78,10 @@ CREATE TABLE tblLocacoes (
     CONSTRAINT FK_Locacoes_Clientes FOREIGN KEY (ClienteID) REFERENCES tblClientes(ClienteID),
     CONSTRAINT FK_Locacoes_Veiculos FOREIGN KEY (VeiculoID) REFERENCES tblVeiculos(VeiculoID)
 );
+
+UPDATE tblLocacoes
+SET Status = 'Concluida'
+WHERE Status = 'Finalizada'
 
 -- 7. Tabela tblLocacaoFuncionarios (Tabela de Junção para o relacionamento N:M entre tblLocacoes e tblFuncionarios)
 CREATE TABLE tblLocacaoFuncionarios (
@@ -139,3 +149,18 @@ INSERT INTO tblLocacaoFuncionarios (LocacaoID, FuncionarioID) VALUES
 -- Pedro envolvido na Locação 2
 INSERT INTO tblLocacaoFuncionarios (LocacaoID, FuncionarioID) VALUES
 (2, 2);
+
+SELECT * FROM tblClientes
+SELECT * FROM tblDocumentos
+
+SELECT c.Nome, c.Email, c.Telefone,
+    d.TipoDocumento, d.Numero, d.DataEmissao, d.DataValidade
+    FROM tblClientes c
+    JOIN tblDocumentos d
+    ON c.ClienteID  = d.ClienteID
+
+UPDATE tblDocumentos
+SET TipoDocumento = 'RG'
+
+
+SELECT * FROM tblVeiculos

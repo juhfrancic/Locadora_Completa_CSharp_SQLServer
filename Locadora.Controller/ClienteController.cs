@@ -122,6 +122,15 @@ namespace Locadora.Controller
                                                 reader["Telefone"].ToString() : null
                                                 );
                     cliente.setClienteID(Convert.ToInt32(reader["ClienteID"]));
+
+                    var documento = new Documento(reader["TipoDocumento"].ToString(),
+                                                  reader["Numero"].ToString(),
+                                                  DateOnly.FromDateTime(reader.GetDateTime(6)),
+                                                  DateOnly.FromDateTime(reader.GetDateTime(7))
+                                                );
+
+                    cliente.setDocumento(documento);
+
                     return cliente;
                 }
                 return null;
@@ -133,6 +142,57 @@ namespace Locadora.Controller
             catch (Exception ex)
             {
                 throw new Exception("Erro inesperado ao buscar cliente por email: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public Cliente BuscarClientePorId(int clienteId)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+            try
+            {
+                SqlCommand command = new SqlCommand(Cliente.SELECTCLIENTEPORID, connection);
+
+                command.Parameters.AddWithValue("@ClienteID", clienteId);
+
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    var cliente = new Cliente(reader["Nome"].ToString(),
+                                                reader["Email"].ToString(),
+                                                reader["Telefone"] != DBNull.Value ?
+                                                reader["Telefone"].ToString() : null
+                                                );
+                    cliente.setClienteID(Convert.ToInt32(reader["ClienteID"]));
+
+                    if (reader["TipoDocumento"] != DBNull.Value &&
+                    reader["Numero"] != DBNull.Value &&
+                    reader["DataEmissao"] != DBNull.Value &&
+                    reader["DataValidade"] != DBNull.Value)
+                    {
+
+                        var documento = new Documento(reader["TipoDocumento"].ToString(),
+                                                  reader["Numero"].ToString(),
+                                                  DateOnly.FromDateTime(Convert.ToDateTime(reader["DataEmissao"])),
+                                                  DateOnly.FromDateTime(Convert.ToDateTime(reader["DataValidade"]))
+              );
+                        cliente.setDocumento(documento);
+                    }
+                    return cliente;
+                }
+                return null;
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar cliente por Id: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao buscar cliente por Id: " + ex.Message);
             }
             finally
             {
@@ -170,6 +230,41 @@ namespace Locadora.Controller
             {
                 connection.Close();
             }
+        }
+        public void AtualizarDocumentoCliente(string email, Documento documento)
+        {
+            var clienteEncontrado = BuscaClientePorEmail(email) ??
+                throw new Exception("Não existe cliente com esse email cadastrado!");
+
+            SqlConnection connection = new SqlConnection(ConnectionDB.GetConnectionString());
+            connection.Open();
+
+            using (SqlTransaction transaction = connection.BeginTransaction())
+            {
+                try
+                {
+                    documento.setClienteID(clienteEncontrado.ClienteID);
+                    DocumentoController documentoController = new DocumentoController();
+
+                    documentoController.AtualizarDocumento(documento, connection, transaction);
+                    transaction.Commit();
+                }
+                catch (SqlException ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro ao atualizar documento do cliente: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Erro inesperado ao atualizar documento do cliente: " + ex.Message);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
         }
         public void DeletarClientePorEmail(string email)
         {

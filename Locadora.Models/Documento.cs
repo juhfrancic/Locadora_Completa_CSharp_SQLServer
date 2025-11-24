@@ -12,6 +12,13 @@ namespace Locadora.Models
             "(ClienteID, TipoDocumento, Numero, DataEmissao, DataValidade) " +
             "VALUES (@ClienteID, @TipoDocumento, @Numero, @DataEmissao, @DataValidade)";
 
+        public static readonly string UPDATEDOCUMENTO = @"UPDATE tblDocumentos
+                                                            SET TipoDocumento = @TipoDocumento,
+                                                            Numero = @Numero,
+                                                            DataEmissao = @DataEmissao,
+                                                            DataValidade = @DataValidade
+                                                            WHERE ClienteID = @IdCliente";
+
         public int DocumentoID { get; private set; }
         public int ClienteID { get; private set; }
         public string TipoDocumento { get; private set; }
