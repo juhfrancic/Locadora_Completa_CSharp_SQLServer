@@ -80,14 +80,16 @@ void MenuCliente()
             case 3:
                 Console.WriteLine("Qual o email do cliente que deseja buscar?");
                 email = Console.ReadLine();
+                Console.WriteLine($"---Cliente Encontrado com o email {email}---");  
                 try
                 {
                     cliente = clienteController.BuscaClientePorEmail(email);
+                    Console.WriteLine("Cliente encontrado com sucesso!\n");  
                     Console.WriteLine(cliente);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Erro ao buscar cliente: " + ex.Message);
+                    Console.WriteLine("Erro ao buscar cliente pelo email: " + ex.Message);
                 }
                 break;
 
@@ -183,7 +185,7 @@ void MenuFuncionario()
                 try
                 {
                     funcionarioController.AdicionarFuncionario(funcionario);
-                    Console.WriteLine("Funcionário adicionado com sucesso");
+                    Console.WriteLine("Funcionário adicionado com sucesso!");
                 }
                 catch (Exception ex)
                 {
@@ -224,7 +226,7 @@ void MenuFuncionario()
                 }
                 break;
             case 4:
-                Console.WriteLine("Qual email do funcionário que desja deletar?");
+                Console.WriteLine("Qual email do funcionário que deseja deletar?");
                 email = Console.ReadLine();
 
                 try
@@ -289,6 +291,7 @@ void MenuLocacao()
                 try
                 {
                     locacaoController.AdicionarLocacao(locacao, emailsFuncionarios);
+                    Console.WriteLine("Locação adicionada com sucesso!");  
                 }
                 catch (Exception ex)
                 {
@@ -304,6 +307,7 @@ void MenuLocacao()
                 try
                 {
                     locacaoFuncionarioController.AdicionarLocacaoFuncionario(locacaoID, funcionarioID);
+                    Console.WriteLine("Funcionario adicionado a locação com sucesso!"); 
                 }
                 catch (Exception ex)
                 {
@@ -441,6 +445,7 @@ void MenuVeiculo()
                 try
                 {
                     categoriaController.AdicionarCategoria(categoria);
+                    Console.WriteLine("Categoria adicionada com sucesso!");  
                 }
                 catch (Exception ex)
                 {
@@ -464,6 +469,7 @@ void MenuVeiculo()
                 try
                 {
                     categoriaController.UpdateCategoria(categoriaIdAtualizada, nomeAtualizada, descricaoAtualizada);
+                    Console.WriteLine("Categoria atualizada com sucesso!"); 
                 }
                 catch (Exception ex)
                 {
@@ -476,6 +482,7 @@ void MenuVeiculo()
                 try
                 {
                     categoriaController.DeleteCategoria(categoriaIdDeletado);
+                    Console.WriteLine("Categoria deletada com sucesso!"); 
                 }
                 catch (Exception ex)
                 {
@@ -499,6 +506,7 @@ void MenuVeiculo()
                 {
                     var veiculo = new Veiculo(categoriaId, placa, marca, modelo, ano, eStatus);
                     veiculoController.AdicionarVeiculo(veiculo);
+                    Console.WriteLine("Veículo adicionado com sucesso!");  
                 }
                 catch (Exception ex)
                 {
@@ -511,6 +519,7 @@ void MenuVeiculo()
                 try
                 {
                     var veiculosPorCategoria = veiculoController.BuscarVeiculosPorCategoria(categoriaIdBuscar);
+                    Console.WriteLine("---Veículos por categoria---");  
                     foreach (var veiculo in veiculosPorCategoria)
                     {
                         Console.WriteLine(veiculo);
